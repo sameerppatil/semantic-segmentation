@@ -5,7 +5,7 @@ import helper
 import warnings
 from distutils.version import LooseVersion
 import project_tests as tests
-
+from time import time
 
 # Check TensorFlow Version
 assert LooseVersion(tf.__version__) >= LooseVersion('1.0'), 'Please use TensorFlow version 1.0 or newer.  You are using {}'.format(tf.__version__)
@@ -61,7 +61,7 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
     vgg_layer3_conv = tf.layers.conv2d(vgg_layer3_out, num_classes, 1,
             padding='same', kernel_initializer=tf.random_normal_initializer(stddev=0.01),
             bias_initializer=tf.random_normal_initializer(stddev=0.01),
-            kernel_regularizer=tf.contrib.layers.l2.regularizer(1e-3))
+            kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
 
     vgg_layer4_conv = tf.layers.conv2d(vgg_layer4_out, num_classes, 1,
             padding='same', kernel_initializer=tf.random_normal_initializer(stddev=0.01),
@@ -73,7 +73,7 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
             bias_initializer=tf.random_normal_initializer(stddev=0.01),
             kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
 
-    vgg_layer7_transpose = tf.conv2d.transpose(vgg_layer7_conv, num_classes, 4, 2, padding='same',
+    vgg_layer7_transpose = tf.layers.conv2d_transpose(vgg_layer7_conv, num_classes, 4, 2, padding='same',
             kernel_initializer=tf.random_normal_initializer(stddev=0.01),
             bias_initializer=tf.random_normal_initializer(stddev=0.01),
             kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
@@ -81,7 +81,7 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
 
     vgg_layer4_output = tf.add(vgg_layer7_transpose, vgg_layer4_conv)
 
-    vgg_layer4_transpose = tf.conv2d.transpose(vgg_layer4_output, num_classes, 4, 2, padding='same',
+    vgg_layer4_transpose = tf.layers.conv2d_transpose(vgg_layer4_output, num_classes, 4, 2, padding='same',
             kernel_initializer=tf.random_normal_initializer(stddev=0.01),
             bias_initializer=tf.random_normal_initializer(stddev=0.01),
             kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
@@ -89,7 +89,7 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
 
     vgg_layer3_output = tf.add(vgg_layer4_transpose, vgg_layer3_conv)
 
-    output_layer = tf.conv2d.transpose(vgg_layer3_output, num_classes, 16, 8, padding='same',
+    output_layer = tf.layers.conv2d_transpose(vgg_layer3_output, num_classes, 16, 8, padding='same',
             kernel_initializer=tf.random_normal_initializer(stddev=0.01),
             bias_initializer=tf.random_normal_initializer(stddev=0.01),
             kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
