@@ -5,7 +5,7 @@ import helper
 import warnings
 from distutils.version import LooseVersion
 import project_tests as tests
-from time import time
+import time
 
 # Check TensorFlow Version
 assert LooseVersion(tf.__version__) >= LooseVersion('1.0'), 'Please use TensorFlow version 1.0 or newer.  You are using {}'.format(tf.__version__)
@@ -137,19 +137,21 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
     """
     # TODO: Implement function
 
-    start_time = time()
+    start_time = time.time()
 
     sess.run(tf.global_variables_initializer())
     probability = 0.5
     lrate = 0.0001
+
     for epoch in range(epochs):
         print ("Epoch num:", epoch)
         for image, label in get_batches_fn(batch_size):
             _, loss = sess.run([train_op, cross_entropy_loss], \
                     feed_dict = {input_image: image, correct_label: label, keep_prob:probability, learning_rate: lrate})
-            print("Loss = {:.3f}".format(loss))
+            print("Loss for epoch %d is %.3f" % (epoch, loss))
+        print("Loss for epoch %d is %.3f" % (epoch, loss))
 
-    print("Time elapsed: ", round(time() - start_time, 3), "s")
+    print("Time elapsed: %.2fs" % round(time.time() - start_time, 3))
     pass
 tests.test_train_nn(train_nn)
 
@@ -186,7 +188,7 @@ def run():
         logits, train_op, cross_entropy_loss = optimize(output_layer, correct_label, learning_rate, num_classes)
         # TODO: Train NN using the train_nn function
 
-        epochs = 10
+        epochs = 13
         batch_size = 5
         train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_loss, image_input,
              correct_label, keep_prob, learning_rate)
